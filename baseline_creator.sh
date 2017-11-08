@@ -4,13 +4,14 @@
 
 #://askubuntu.com/questions/678914/loop-through-all-files-in-a-folder
 function makeBase() {
+    ABSPATH=$(find / -name Baselines 2>/dev/null)
     prefix=$(echo -n $1 | rev | cut -d "/" -f 1 | rev)
     suffix="_baseline.txt"
     filename="$prefix$suffix"
-    checker=$(nameCheck $filename | head -n 1)
+    checker=$(nameCheck $filename $ABSPATH | head -n 1)
     if [ $checker -ne 1 ]; then
         baselineWrite $1
-        mv temp.txt "$PWD/Baselines/$(echo $filename)"
+        mv temp.txt "$ABSPATH/$(echo $filename)"
     else
         echo "Oops, you already took this baseline"
     fi
@@ -29,7 +30,7 @@ function baselineWrite() {
 }
 
 function nameCheck(){
-    for i in "$PWD/Baselines"/*
+    for i in "$2"/*
     do
         if [ "$(echo -n $i | rev | cut -d "/" -f 1 | rev)" == "$1" ]; then
             echo 1
