@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 #This will loop through the files in a directory (Put in loop of directories)
 
 #://askubuntu.com/questions/678914/loop-through-all-files-in-a-folder
-function createBaseline() {
-    ABSPATH=$(find / -name Baselines 2>/dev/null)
+createBaseline() {
+    ABSPATH=$(realpath Baselines)
     BASEPATH=$(find / -name $1 2>/dev/null)
     file=$(makeBase $BASEPATH)
     checker=$(nameCheck $file $ABSPATH | head -n 1)
@@ -16,14 +16,14 @@ function createBaseline() {
     fi
 }
 
-function makeBase() {
+makeBase() {
     prefix=$(echo -n $1 | rev | cut -d "/" -f 1 | rev)
     suffix="_baseline.txt"
     filename="$prefix$suffix"
     echo $filename
 }
 
-function baselineWrite() { 
+baselineWrite() { 
     for i in "$1"/*
     do
         if [ -d "$i" ]; then
@@ -35,14 +35,14 @@ function baselineWrite() {
     done >> temp.txt
 }
 
-function nameCheck(){
+nameCheck(){
     for i in "$2"/*
     do
-        if [ "$(echo -n $i | rev | cut -d "/" -f 1 | rev)" == "$1" ]; then
+        stuff=$(echo -n "$i" | rev | cut -f 1 -d "/" | rev)
+        if [ "$stuff" == "$1" ]; then
             echo 1
             break
         fi
     done
     echo 0
 }
-createBaseline "Downloads" "File.txt"
