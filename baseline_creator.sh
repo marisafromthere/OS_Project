@@ -5,10 +5,11 @@
 #://askubuntu.com/questions/678914/loop-through-all-files-in-a-folder
 function createBaseline() {
     ABSPATH=$(find / -name Baselines 2>/dev/null)
-    file=$(makeBase $1)
+    BASEPATH=$(find / -name $1 2>/dev/null)
+    file=$(makeBase $BASEPATH)
     checker=$(nameCheck $file $ABSPATH | head -n 1)
     if [ $checker -ne 1 ]; then
-        baselineWrite $1
+        baselineWrite $BASEPATH
         mv temp.txt "$ABSPATH/$(echo $file)"
     else
         echo "Oops, you already took this baseline"
