@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #This will loop through the files in a directory (Put in loop of directories)
 
@@ -45,4 +45,4 @@ function nameCheck(){
     done
     echo 0
 }
-createBaseline "$PWD" "File.txt"
+createBaseline "Downloads" "File.txt"
