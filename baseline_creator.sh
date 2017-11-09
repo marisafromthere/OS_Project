@@ -27,10 +27,10 @@ baselineWrite() {
     for i in "$1"/*
     do
         if [ -d "$i" ]; then
-            ls -l -d $i
+            ls -lid $i
 	    baselineWrite "$i"
         elif [ -e "$i" ]; then
-            ls -l $i
+            ls -li $i
         fi
     done >> temp.txt
 }
