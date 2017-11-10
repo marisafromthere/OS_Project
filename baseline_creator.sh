@@ -4,15 +4,29 @@
 
 #://askubuntu.com/questions/678914/loop-through-all-files-in-a-folder
 createBaseline() {
-    ABSPATH=$(realpath Baselines)
+    echo $1
     BASEPATH=$(find / -name $1 2>/dev/null)
-    file=$(makeBase $BASEPATH)
-    checker=$(nameCheck $file $ABSPATH | head -n 1)
-    if [ $checker -ne 1 ]; then
-        baselineWrite $BASEPATH
-        mv temp.txt "$ABSPATH/$(echo $file)"
+    if [ -d "$BASEPATH" ]
+    then
+        #stores absolute bath to the Baselines folder
+        ABSPATH=$(realpath Baselines)
+        #stores absolute path to directory and ensures it exists
+        #BASEPATH=$(find / -name $1 2>/dev/null)
+
+        #calls makeBase func and create custom file name 
+        #nameCheck is called to ensure a baseline does not already exist
+        file=$(makeBase $BASEPATH)
+        checker=$(nameCheck $file $ABSPATH | head -n 1)
+
+        #if there is no baseline file then baselineWrite is called to create it
+        if [ $checker -ne 1 ]; then
+            baselineWrite $BASEPATH > "$ABSPATH/$(echo $file)"
+           # mv temp.txt "$ABSPATH/$(echo $file)"
+        else
+            echo "Oops, you already took this baseline"
+        fi
     else
-        echo "Oops, you already took this baseline"
+        echo "Oops, that's not a directory!"
     fi
 }
 
@@ -32,17 +46,18 @@ baselineWrite() {
         elif [ -e "$i" ]; then
             ls -li $i
         fi
-    done >> temp.txt
+    done
 }
 
 nameCheck(){
     for i in "$2"/*
     do
-        stuff=$(echo -n "$i" | rev | cut -f 1 -d "/" | rev)
-        if [ "$stuff" == "$1" ]; then
+        name=$(echo -n "$i" | rev | cut -f 1 -d "/" | rev)
+        if [ "$name" == "$1" ]; then
             echo 1
             break
         fi
     done
     echo 0
 }
+createBaseline $1
