@@ -11,8 +11,12 @@ function change_check() {
         #DIRPATH=$(find / -name $1 2>/dev/null)
         base=./Baselines/$1_baseline.txt
 
+        for i in {1..10..1}
+        do
+            spotDiff $base temp.txt $i
+        done
         #if theres difference, then there's change.
-        comm -3 $base temp.txt
+        #comm -3 --total $base temp.txt
     fi
 
 }
@@ -40,23 +44,28 @@ dirLoop() {
     done
 }
 
-comparebaseline_example () {
-    if [ -d $1 ]
-    then
-        if [ -f "Baselines/$1.txt" ]
+spotDiff() {
+    i=1
+    j=2
+    cat $1 | while read rec 
+    do
+        BaseTake=$(echo $rec | cut -d " " -f "$3")
+        #filename=$(echo $rec | awk {print $9'})
+        #filenow=$(ls -l $filename)
+        CheckTake=$(head -n$i "$2" | tail -n1 | cut -d " " -f "$3")
+        deleteCheck=$(head -n$j "$2" | tail -n1 | cut -d " " -f "$3")
+
+        if [ $BaseTake != $CheckTake ]
         then
-            cat "Baselines/$1.txt" | while read record
-            do
-                perms=$(echo $rec | awk {'print $1'})
-                filename=$(echo $rec | awk {'print $9'})
-                filenow=$(ls -l $filename)
-                permsnow=$(echo $filenow | awk {'print $1'})
-                if [ $perms == $permsnow ]
-                then
-                    echo "permissions haven't changed"
-                fi
-            done
+            if [ $deleteCheck == $BaseTake ]
+            then
+                 (( i+=1 ))
+            else
+                echo -n $rec | cut -d " " -f 10
+            fi
         fi
-    fi
+        (( i+=1 ))
+        (( j+=1 ))
+    done
 }
-change_check OS_Project
+spotDiff ./Baselines/OS_Project_baseline.txt "temp.txt" "1"
