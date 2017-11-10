@@ -11,7 +11,9 @@ function change_check() {
         #DIRPATH=$(find / -name $1 2>/dev/null)
         base=./Baselines/$1_baseline.txt
 
-        for i in {1..10..1}
+        rm ./Reports/temp_Report.txt
+
+        for i in {1..11..1}
         do
             spotDiff $base temp.txt $i >> ./Reports/temp_Report.txt
         done
@@ -55,14 +57,13 @@ spotDiff() {
         #filenow=$(ls -l $filename)
         CheckTake=$(head -n$i "$2" | tail -n1 | cut -d " " -f "$3")
         deleteCheck=$(head -n$j "$2" | tail -n1 | cut -d " " -f "$3")
-        echo $CheckTake
-        if [ $BaseTake != $CheckTake ]
+        if [ "$BaseTake" != "$CheckTake" ]
         then
-            if [ $deleteCheck == $BaseTake ]
+            if [ "$deleteCheck" == "$BaseTake" ]
             then
                  (( i+=1 ))
             else
-                echo -n "Change in Flag "$3" at: "
+                echo -n "Change detected in Flag "$3" at: "
                 echo -n $rec | cut -d " " -f 10
             fi
         fi
