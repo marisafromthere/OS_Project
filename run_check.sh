@@ -13,12 +13,13 @@ function change_check() {
 
         for i in {1..10..1}
         do
-            spotDiff $base temp.txt $i
+            spotDiff $base temp.txt $i >> ./Reports/temp_Report.txt
         done
         #if theres difference, then there's change.
         #comm -3 --total $base temp.txt
     fi
 
+    rm temp.txt
 }
 
 tempCreate() {
@@ -54,13 +55,14 @@ spotDiff() {
         #filenow=$(ls -l $filename)
         CheckTake=$(head -n$i "$2" | tail -n1 | cut -d " " -f "$3")
         deleteCheck=$(head -n$j "$2" | tail -n1 | cut -d " " -f "$3")
-
+        echo $CheckTake
         if [ $BaseTake != $CheckTake ]
         then
             if [ $deleteCheck == $BaseTake ]
             then
                  (( i+=1 ))
             else
+                echo -n "Change in Flag "$3" at: "
                 echo -n $rec | cut -d " " -f 10
             fi
         fi
@@ -68,4 +70,6 @@ spotDiff() {
         (( j+=1 ))
     done
 }
-spotDiff ./Baselines/OS_Project_baseline.txt "temp.txt" "1"
+#spotDiff ./Baselines/OS_Project_baseline.txt "temp.txt" "8"
+#tempCreate "OS_Project"
+change_check "OS_Project"
