@@ -5,6 +5,7 @@
 
 
 function change_check() {
+    echo "Running Check... This takes a moment"
     tempCreate $1
     if [ -e temp.txt ]
     then
@@ -22,6 +23,7 @@ function change_check() {
     fi
 
     rm temp.txt
+    echo "Finished Check! Results will be stored in temp_Report until a report is generated."
 }
 
 tempCreate() {
@@ -71,6 +73,5 @@ spotDiff() {
         (( j+=1 ))
     done
 }
-#spotDiff ./Baselines/OS_Project_baseline.txt "temp.txt" "8"
-#tempCreate "OS_Project"
-change_check "OS_Project"
+
+change_check "$1"
