@@ -1,8 +1,0 @@
--rwxr--r-- 1 dio dio 592 Nov  7 19:30 /home/dio/Documents/git/OS_Project/baseline_creator.sh
-total 4
--rw-r--r-- 1 dio dio 349 Nov  7 19:27 temp.txt
--rw-r--r-- 1 dio dio 349 Nov  7 19:27 /home/dio/Documents/git/OS_Project/Baselines/temp.txt
--rw-r--r-- 1 dio dio 13 Nov  6 23:27 /home/dio/Documents/git/OS_Project/main.sh
--rw-r--r-- 1 dio dio 49 Nov  6 23:27 /home/dio/Documents/git/OS_Project/README.md
--rw-r--r-- 1 dio dio 460 Nov  6 23:27 /home/dio/Documents/git/OS_Project/run_check.sh
--rw-r--r-- 1 dio dio 488 Nov  7 19:30 /home/dio/Documents/git/OS_Project/temp.txt
