@@ -25,8 +25,15 @@ main() {
             ;;
 
         [3]*)
-            echo "Reporting is not complete yet, but here's your temp_Report"
-            cat ./Reports/temp_Report.txt
+            echo "Would you like to create a report out of your temp_Reports file?(y/n)"
+            read ans
+
+            if [ "$ans" == "y" ]; then
+                echo "Please name your report"
+                read name
+
+                source ./reporting.sh "./Reports/temp_Report.txt" > "./Reports/"$name""
+            fi
             ;;
         esac
 
