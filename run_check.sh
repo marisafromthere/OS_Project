@@ -1,32 +1,42 @@
 #!/bin/bash
 
-#Potential start to the checking program
-#https://ubuntuforums.org/showthread.php?t=950939
-
+#Special thank you to Symen Mulder for pointers/suggestions for comparing files
 
 function change_check() {
-    echo "Running Check... This takes a moment"
+    #creates temp.txt file to check against the baseline
     tempCreate $1
+
+    #If successful, runs the check
     if [ -e temp.txt ]
     then
-        #DIRPATH=$(find / -name $1 2>/dev/null)
+        echo "Running Check... This takes a moment"
         base=./Baselines/$1_baseline.txt
 
-        rm ./Reports/temp_Report.txt
+        #If data already stored in the temp_Report file, it is destroyed and replaced
+        if [ -e ./Reports/temp_Report.txt ]
+        then
+            rm ./Reports/temp_Report.txt
+        else
+            touch ./Reports/temp_Report.txt
+        fi
 
         for i in {1..11..1}
         do
+            #Does all heavy lifting while running check
             spotDiff $base temp.txt $i >> ./Reports/temp_Report.txt
         done
-        #if theres difference, then there's change.
-        #comm -3 --total $base temp.txt
+
+        #removes raw data file used to create temp_Report
+        rm temp.txt
+        echo "Finished Check! Results will be stored in temp_Report until a report is generated!"
+
     fi
 
-    rm temp.txt
-    echo "Finished Check! Results will be stored in temp_Report until a report is generated."
 }
 
 tempCreate() {
+    #If a baseline for the user input exists
+    #and the input is a directory a temp file is created
     path=$(find / -name $1 2>"/dev/null")
     if [ -d "$path" ] && [ -e ./Baselines/$1_baseline.txt ]
     then
@@ -36,6 +46,7 @@ tempCreate() {
     fi
 }
 
+#same function as baselineWrite to create temp file
 dirLoop() {
     for i in "$1"/*
     do
@@ -50,20 +61,29 @@ dirLoop() {
 }
 
 spotDiff() {
+    #Accumulator Variables
     i=1
     j=2
-    cat $1 | while read rec 
+
+    #reads line-by-line from baseline file
+    cat $1 | while read rec
     do
+        #Each variable takes out a specific field depending on the for loop num
+        #Basetake reads from Baseline
         BaseTake=$(echo $rec | cut -d " " -f "$3")
-        #filename=$(echo $rec | awk {print $9'})
-        #filenow=$(ls -l $filename)
+        #CheckTake reads from temp.txt
         CheckTake=$(head -n$i "$2" | tail -n1 | cut -d " " -f "$3")
+        #deleteCheck reads one line ahead on temp.txt
         deleteCheck=$(head -n$j "$2" | tail -n1 | cut -d " " -f "$3")
+
+        #Checks if file lines are different
         if [ "$BaseTake" != "$CheckTake" ]
         then
+            #Checks if difference is because of deletion and fixes accumulators
             if [ "$deleteCheck" == "$BaseTake" ]
             then
                  (( i+=1 ))
+                 (( j+=1 ))
             else
                 echo -n "Change detected in Flag "$3" at: "
                 echo -n $rec | cut -d " " -f 10

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#Makes a basic report sorting the found changes by priority level
+#every change displayed with path name
 createReport() {
     echo "HIGH PRIORITY CHANGES"
 

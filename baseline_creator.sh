@@ -4,16 +4,15 @@
 
 #://askubuntu.com/questions/678914/loop-through-all-files-in-a-folder
 createBaseline() {
-    echo $1
-    BASEPATH=$(find / -name $1 2>/dev/null)
+    BASEPATH=$(find / -name $1 2>/dev/null | head -n1)
+
+    #Checks to make sure user input is an existing directory
     if [ -d "$BASEPATH" ]
     then
         #stores absolute bath to the Baselines folder
         ABSPATH=$(realpath Baselines)
-        #stores absolute path to directory and ensures it exists
-        #BASEPATH=$(find / -name $1 2>/dev/null)
 
-        #calls makeBase func and create custom file name 
+        #calls makeBase func and create custom file name
         #nameCheck is called to ensure a baseline does not already exist
         file=$(makeBase $BASEPATH)
         checker=$(nameCheck $file $ABSPATH | head -n 1)
@@ -21,7 +20,6 @@ createBaseline() {
         #if there is no baseline file then baselineWrite is called to create it
         if [ $checker -ne 1 ]; then
             baselineWrite $BASEPATH > "$ABSPATH/$(echo $file)"
-           # mv temp.txt "$ABSPATH/$(echo $file)"
         else
             echo "Oops, you already took this baseline"
         fi
@@ -37,7 +35,9 @@ makeBase() {
     echo $filename
 }
 
-baselineWrite() { 
+baselineWrite() {
+    #Function loops through all files in a folder
+    #Uses recursion to loop through existing subdirectories
     for i in "$1"/*
     do
         if [ -d "$i" ]; then
@@ -50,6 +50,7 @@ baselineWrite() {
 }
 
 nameCheck(){
+    #Used to make surea baseline doesn't already exist so it doesn't get overwriten
     for i in "$2"/*
     do
         name=$(echo -n "$i" | rev | cut -f 1 -d "/" | rev)
@@ -60,4 +61,5 @@ nameCheck(){
     done
     echo 0
 }
+#Call function
 createBaseline $1
